@@ -16,17 +16,16 @@ jobs:
         shell: powershell
         run: |
           $instance = "F9NBPX3\SQL2019"
+          Write-Host "============================================================"
+          Write-Host "Running 1-CreatePeerCheckTable.sql on ${instance}"
+            $query = Get-Content -Raw -Path "${env:GITHUB_WORKSPACE}\Peer Check\1-CreatePeerCheckTable.sql"
+          try {
+            Invoke-DbaQuery -SqlInstance $instance -Query $query -EnableException
+            Write-Host "1-CreatePeerCheckTable.sql executed successfully on ${instance}"
             Write-Host "============================================================"
-            Write-Host "Running 1-CreatePeerCheckTable.sql on ${instance}"
-            $query = Get-Content -Raw -Path './Peer Check/1-CreatePeerCheckTable.sql'
-            try {
-              Invoke-DbaQuery -SqlInstance $instance -Query $query -EnableException
-              Write-Host "1-CreatePeerCheckTable.sql executed successfully on ${instance}"
-              Write-Host "============================================================"
-            } catch {
-              Write-Host "Error: Failed to run 1-CreatePeerCheckTable.sql on ${instance}."
-              Write-Host "Exception Message: $($_.Exception.Message)"
-              Write-Host "Exception Details: $($_ | Out-String)"
-              exit 1
-            }
+          } catch {
+            Write-Host "Error: Failed to run 1-CreatePeerCheckTable.sql on ${instance}."
+            Write-Host "Exception Message: $($_.Exception.Message)"
+            Write-Host "Exception Details: $($_ | Out-String)"
+            exit 1
           }
