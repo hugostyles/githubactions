@@ -1,19 +1,32 @@
-name: First Worklow
+name: Testing Worklow
 
 # Controls when the workflow will run, e.g. manually
 on: workflow_dispatch
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "first job"
   first-job:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Runs a single command using the runners shell
-      - name: Say-Hello
-        run: echo "Hello, world!"
-      # Runs a set of commands using the runners shell
-      - name: Say-GoodBye
-        run: echo "Bye Bye"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Run 1-CreatePeerCheckTable.sql on all instances
+        shell: powershell
+        run: |
+          $instance = "F9NBPX3\SQL2019"
+            Write-Host "============================================================"
+            Write-Host "Running 1-CreatePeerCheckTable.sql on ${instance}"
+            $query = Get-Content -Raw -Path './Peer Check/1-CreatePeerCheckTable.sql'
+            try {
+              Invoke-DbaQuery -SqlInstance $instance -Query $query -EnableException
+              Write-Host "1-CreatePeerCheckTable.sql executed successfully on ${instance}"
+              Write-Host "============================================================"
+            } catch {
+              Write-Host "Error: Failed to run 1-CreatePeerCheckTable.sql on ${instance}."
+              Write-Host "Exception Message: $($_.Exception.Message)"
+              Write-Host "Exception Details: $($_ | Out-String)"
+              exit 1
+            }
+          }
