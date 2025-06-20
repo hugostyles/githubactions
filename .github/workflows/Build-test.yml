@@ -28,14 +28,19 @@ jobs:
               $servernames = "${{ github.event.inputs.servernames }}" -split ','
               Write-Host "============================================================"
               Write-Host "Getting SQL Server instances for ${servernames}"
-              try {
-                $instances = Get-DbaInstance -ComputerName $servernames -SqlInstance | Select-Object -ExpandProperty Name
-                Write-Host "SQL Server instances found: $instances"
+              foreach ($server in $servernames) {
+                # Loop through each server name provided in the input
+                Write-Host "Processing server: $server"
+                try {
+                $instances = Get-DbaService -ComputerName $server -Type Engine -EnableException |
+                Select-Object @{L='SqlInstance';e={('{0}\{1}' -f $_.ComputerName, $_.InstanceName)}}
+                Write-Host "SQL Server instances found"
                 Write-Host "============================================================"
-                echo "::set-output name=sqinstancenames::$instances"
-              } catch {
-                Write-Host "Error: Failed to get SQL Server instances for ${servernames}."
+                $instances
+                } catch {
+                Write-Host "Error: Failed to get SQL Server instances for ${server}."
                 Write-Host "Exception Message: $($_.Exception.Message)"
                 Write-Host "Exception Details: $($_ | Out-String)"
                 exit 1
-              }
+                }
+                }           
