@@ -4,9 +4,16 @@ on:
   workflow_dispatch:
     inputs:      
       servernames:        
-        description: 'Comma-separated list of SQL Server names (e.g., SERVER1,SERVER2)'
+        description: 'List of servers you require the run the build on (enter in Primary, Secondary, RS order) e.g., SERVER1,SERVER2'
         required: true
         default: 'F9NBPX3'
+      authority:        
+        description: 'England, Scotland, IoM, NI, Jersey, Wales etc'
+        required: true
+        default: 'England'
+
+
+
 jobs:
     build-automation:
         runs-on: [self-hosted, windows]
@@ -29,9 +36,10 @@ jobs:
               Write-Host "Validating Parameters."
               $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
               $servernames = "${{ github.event.inputs.servernames }}"
-              write-host "Server names provided: $servernames"
+              $authority = "${{ github.event.inputs.authority }}"
+
               # Execute the script to validate the parameters
-              & $script -SQLServers $servernames -ErrorAction Stop
+              & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop
 
           - name: Get-SQL-Server-instances
             # Get SQL Server instances from the provided server names
