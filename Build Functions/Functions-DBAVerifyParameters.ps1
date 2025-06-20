@@ -2,8 +2,6 @@ param(
     [string]$SQLServers
 )
 
-Invoke-VerifyParameters -SQLServers $SQLServers 
-
 function Invoke-VerifyParameters {
     param(
         [string]$SQLServers
@@ -35,3 +33,4 @@ function Invoke-VerifyParameters {
 }
 
 
+Invoke-VerifyParameters -SQLServers $SQLServers 
