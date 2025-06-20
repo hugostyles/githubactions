@@ -17,11 +17,11 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Setup PowerShell environment
-            shell: pwsh
+            shell: powershell
             run: |
               Install-Module -Name dbatools -Scope CurrentUser -Force
               Import-Module dbatools
-              
+
           - name: Get-SQL-Server-instances
             # Step to set up the PowerShell environment
             shell: powershell
