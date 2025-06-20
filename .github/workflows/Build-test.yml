@@ -18,18 +18,18 @@ jobs:
     build-automation:
         runs-on: [self-hosted, windows]
         steps:
-          - name: Prepare - Checkout repository
+          - name: PREPARE - Checkout repository
             # Step to checkout the repository
             # This is necessary to access the SQL scripts and other files in the repository
             uses: actions/checkout@v4
 
-          - name: Prepare - Setup PowerShell environment
+          - name: PREPARE - Setup PowerShell environment
             # Step to set up the PowerShell environment
             shell: powershell
             run: Import-Module dbatools
           
 
-          - name: Prepare - Validate Parameters
+          - name: PREPARE - Validate Parameters
             # Validate the input parameters to ensure they are not empty
             shell: powershell
             run: |
@@ -41,7 +41,7 @@ jobs:
               # Execute the script to validate the parameters
               & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop
 
-          - name: Prepare - Get Server and SQL Instance names
+          - name: PREPARE - Get Server and SQL Instance names
             # Get SQL Server instances from the provided server names
             # This step uses the dbatools module to retrieve SQL Server instances
             shell: powershell
@@ -77,7 +77,7 @@ jobs:
                 #Cleanup the empty lines in the instances.txt file
                 (Get-Content -Path instances.txt) | Where-Object { $_.Trim() -ne "" } | Set-Content -Path instances.txt           
 
-          - name: Pre-Build Checks - Invoke-Check-DefaultPath
+          - name: PRE-BUILD - Check SQL Default Path
             shell: powershell
             run: |
                 $instances = Get-Content -Path 'instances.txt'
@@ -87,7 +87,7 @@ jobs:
                     Write-Host "Checking defaultpath on: $instance"
                     Write-Host "Call the script for default path...."
                 }
-          - name: Pre-Build Checks - Invoke-Check-MaxServerMemory
+          - name: PRE-BUILD - Check Max Server Memory
             shell: powershell
             run: |
                 $instances = Get-Content -Path 'instances.txt'            
