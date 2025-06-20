@@ -28,8 +28,9 @@ jobs:
             run: |
               Write-Host "Validating Parameters."
               $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
-              $SQLServers = "${{ github.event.inputs.servernames }}"
-              & $script -SQLServers $SQLServers
+              $servernames = "${{ github.event.inputs.servernames }}"
+              # Execute the script to validate the parameters
+              & $script -SQLServers $servernames -ErrorAction Stop
 
           - name: Get-SQL-Server-instances
             # Get SQL Server instances from the provided server names
