@@ -77,7 +77,7 @@ jobs:
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
                     Write-Host "Checking defaultpath on: $instance"
-                    Wtite-Host "Call the script for default path...."
+                    Write-Host "Call the script for default path...."
                 }
           - name: Invoke-Check-MaxServerMemory
             shell: powershell
@@ -87,5 +87,5 @@ jobs:
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
                     Write-Host "Checking memory on: $instance"
-                    Wtite-Host "Call the script for memory check...."
+                    Write-Host "Call the script for memory check...."
                 }
