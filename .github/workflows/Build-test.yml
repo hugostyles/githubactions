@@ -27,9 +27,9 @@ jobs:
             shell: powershell
             run: |
               Write-Host "Validating Parameters."
-              ".\Build Functions\Functions-DBAVerifyParameters.ps1" -SQLServers "${{ github.event.inputs.servernames }}"
-
-
+              $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
+              $SQLServers = "${{ github.event.inputs.servernames }}"
+              & $script -SQLServers $SQLServers
 
           - name: Get-SQL-Server-instances
             # Get SQL Server instances from the provided server names
