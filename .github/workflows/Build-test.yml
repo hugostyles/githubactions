@@ -8,7 +8,7 @@ on:
         required: true
         default: 'F9NBPX3'
 jobs:
-    get-sql-instances:
+    build-automation:
         runs-on: [self-hosted, windows]
         steps:
           - name: Checkout repository
@@ -17,18 +17,31 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Setup PowerShell environment
+            # Step to set up the PowerShell environment
+            shell: powershell
+            run: Import-Module dbatools
+          
+
+          - name: Validate Parameters
+            # Validate the input parameters to ensure they are not empty
             shell: powershell
             run: |
-                Import-Module dbatools
+              Write-Host "Validating Parameters."
+              .\Build Functions\Functions-DBAVerifyParameters.ps1 -SQLServers $servernames
+
+
 
           - name: Get-SQL-Server-instances
-            # Step to set up the PowerShell environment
+            # Get SQL Server instances from the provided server names
+            # This step uses the dbatools module to retrieve SQL Server instances
             shell: powershell
             run: |
               $servernames = "${{ github.event.inputs.servernames }}" -split ','
               
               # Initialize the instances.txt file to ensure it's empty before writing new data
               Set-Content -Path instances.txt -Value ""
+              # Initialize the servers.txt file and store the server names
+              Set-Content -Path servers.txt -Value $servernames
 
               Write-Host "============================================================"
               Write-Host "Getting SQL Server instances for ${servernames}"
@@ -62,6 +75,7 @@ jobs:
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
                     Write-Host "Checking defaultpath on: $instance"
+                    Wtite-Host "Call the script for default path...."
                 }
           - name: Invoke-Check-MaxServerMemory
             shell: powershell
@@ -71,4 +85,5 @@ jobs:
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
                     Write-Host "Checking memory on: $instance"
+                    Wtite-Host "Call the script for memory check...."
                 }
