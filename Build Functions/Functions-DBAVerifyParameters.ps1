@@ -1,8 +1,8 @@
-function Invoke-VerifyParameters 
-(
-[string[]]$SQLServers
+function Invoke-VerifyParameters {
+param(
+    [string[]]$SQLServers
 )
-{
+
 
     Write-host "Servers : " $SQLServers
     $haserror = 0
