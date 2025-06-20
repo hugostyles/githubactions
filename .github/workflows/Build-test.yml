@@ -18,18 +18,18 @@ jobs:
     build-automation:
         runs-on: [self-hosted, windows]
         steps:
-          - name: Checkout repository
+          - name: Prepare - Checkout repository
             # Step to checkout the repository
             # This is necessary to access the SQL scripts and other files in the repository
             uses: actions/checkout@v4
 
-          - name: Setup PowerShell environment
+          - name: Prepare - Setup PowerShell environment
             # Step to set up the PowerShell environment
             shell: powershell
             run: Import-Module dbatools
           
 
-          - name: Validate Parameters
+          - name: Prepare - Validate Parameters
             # Validate the input parameters to ensure they are not empty
             shell: powershell
             run: |
@@ -41,7 +41,7 @@ jobs:
               # Execute the script to validate the parameters
               & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop
 
-          - name: Get-SQL-Server-instances
+          - name: Prepare - Get Server and SQL Instance names
             # Get SQL Server instances from the provided server names
             # This step uses the dbatools module to retrieve SQL Server instances
             shell: powershell
@@ -77,7 +77,7 @@ jobs:
                 #Cleanup the empty lines in the instances.txt file
                 (Get-Content -Path instances.txt) | Where-Object { $_.Trim() -ne "" } | Set-Content -Path instances.txt           
 
-          - name: Invoke-Check-DefaultPath
+          - name: Pre-Build Checks - Invoke-Check-DefaultPath
             shell: powershell
             run: |
                 $instances = Get-Content -Path 'instances.txt'
@@ -87,7 +87,7 @@ jobs:
                     Write-Host "Checking defaultpath on: $instance"
                     Write-Host "Call the script for default path...."
                 }
-          - name: Invoke-Check-MaxServerMemory
+          - name: Pre-Build Checks - Invoke-Check-MaxServerMemory
             shell: powershell
             run: |
                 $instances = Get-Content -Path 'instances.txt'            
