@@ -29,7 +29,7 @@ jobs:
               Write-Host "Validating Parameters."
               $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
               $servernames = "${{ github.event.inputs.servernames }}"
-              $servernames = $servernames -split ',' 
+              write-host "Server names provided: $servernames"
               # Execute the script to validate the parameters
               & $script -SQLServers $servernames -ErrorAction Stop
 
