@@ -40,7 +40,7 @@ function Invoke-VerifyParameters {
         Write-Output '$Authority - Missing Authority Parameter'
         $haserror = 1}
 
-        
+
     #Summary of the checks
     if ($haserror -ne '1')
     {
@@ -59,4 +59,4 @@ function Invoke-VerifyParameters {
 }
 
 
-Invoke-VerifyParameters -SQLServers $SQLServers 
+Invoke-VerifyParameters -SQLServers $SQLServers -Authority $Authority
