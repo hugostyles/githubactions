@@ -1,6 +1,6 @@
 function Invoke-VerifyParameters 
 (
-[string]$SQLServers
+[string[]]$SQLServers
 )
 {
 
