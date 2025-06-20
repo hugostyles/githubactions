@@ -1,0 +1,36 @@
+name: Build Test Workflow
+
+on:
+  workflow_dispatch:
+    inputs:      
+      servernames:        
+        description: 'Comma-separated list of SQL Server names (e.g., SERVER1,SERVER2)'
+        required: true
+        default: 'F9NBPX3'
+jobs:
+    get-sql-instances:
+        runs-on: [self-hosted, windows]
+        steps:
+          - name: Checkout repository
+            # Step to checkout the repository
+            # This is necessary to access the SQL scripts and other files in the repository
+            uses: actions/checkout@v4
+            
+          - name: Get-SQL-Server-instances
+            # Step to set up the PowerShell environment
+            shell: powershell
+            run: |
+              $servernames = "${{ github.event.inputs.servernames }}" -split ','
+              Write-Host "============================================================"
+              Write-Host "Getting SQL Server instances for ${servernames}"
+              try {
+                $instances = Get-DbaInstance -ComputerName $servernames -SqlInstance | Select-Object -ExpandProperty Name
+                Write-Host "SQL Server instances found: $instances"
+                Write-Host "============================================================"
+                echo "::set-output name=sqinstancenames::$instances"
+              } catch {
+                Write-Host "Error: Failed to get SQL Server instances for ${servernames}."
+                Write-Host "Exception Message: $($_.Exception.Message)"
+                Write-Host "Exception Details: $($_ | Out-String)"
+                exit 1
+              }
