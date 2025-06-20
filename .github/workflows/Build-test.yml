@@ -26,6 +26,10 @@ jobs:
             shell: powershell
             run: |
               $servernames = "${{ github.event.inputs.servernames }}" -split ','
+              
+              # Initialize the instances.txt file to ensure it's empty before writing new data
+              Set-Content -Path instances.txt -Value ""
+
               Write-Host "============================================================"
               Write-Host "Getting SQL Server instances for ${servernames}"
               foreach ($server in $servernames) {
@@ -38,7 +42,7 @@ jobs:
                 $instances
                 Write-Host "============================================================"
                 # Save instances to file for later steps
-                Set-Content -Path instances.txt -Value ($instances -join "`n")
+                Add-Content -Path instances.txt -Value ($instances -join "`n")
                                 
                 } catch {
                 Write-Host "Error: Failed to get SQL Server instances for ${server}."
@@ -46,7 +50,10 @@ jobs:
                 Write-Host "Exception Details: $($_ | Out-String)"
                 exit 1
                 }
-                }           
+                }
+                #Cleanup the empty lines in the instances.txt file
+                (Get-Content -Path instances.txt) | Where-Object { $_.Trim() -ne "" } | Set-Content -Path instances.txt           
+
           - name: Invoke-Check-DefaultPath
             shell: powershell
             run: |
