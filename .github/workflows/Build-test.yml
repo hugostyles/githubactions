@@ -19,8 +19,7 @@ jobs:
           - name: Setup PowerShell environment
             shell: powershell
             run: |
-              Install-Module -Name dbatools -Scope CurrentUser -Force
-              Import-Module dbatools
+                Import-Module dbatools
 
           - name: Get-SQL-Server-instances
             # Step to set up the PowerShell environment
