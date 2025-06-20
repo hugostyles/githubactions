@@ -33,12 +33,12 @@ jobs:
                 Write-Host "Processing server: $server"
                 try {
                 $instances = Get-DbaService -ComputerName $server -Type Engine -EnableException |
-                Select-Object @{L='SqlInstance';e={('{0}\{1}' -f $_.ComputerName, $_.InstanceName)}}
+                ForEach-Object { "$($_.ComputerName)\$($_.InstanceName)" }
                 Write-Host "SQL Server instances found:"
                 $instances
                 Write-Host "============================================================"
                 # Save instances to file for later steps
-                Set-Content -Path instances.txt -Value ($allInstances -join "`n")
+                Set-Content -Path instances.txt -Value ($instances -join "`n")
                                 
                 } catch {
                 Write-Host "Error: Failed to get SQL Server instances for ${server}."
@@ -50,7 +50,7 @@ jobs:
           - name: Invoke-Check-DefaultPath
             shell: powershell
             run: |
-                $instances = Get-Content instances.txt
+                $instances = Get-Content -Path 'instances.txt'
                 foreach ($instance in $instances) {
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
@@ -59,7 +59,7 @@ jobs:
           - name: Invoke-Check-MaxServerMemory
             shell: powershell
             run: |
-                $instances = Get-Content instances.txt            
+                $instances = Get-Content -Path 'instances.txt'            
                 foreach ($instance in $instances) {
                     # Loop through each server name provided in the input
                     Write-Host "Processing server: $instance"
