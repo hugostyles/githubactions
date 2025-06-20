@@ -1,8 +1,13 @@
-function Invoke-VerifyParameters {
 param(
     [string]$SQLServers
 )
 
+Invoke-VerifyParameters -SQLServers $SQLServers 
+
+function Invoke-VerifyParameters {
+    param(
+        [string]$SQLServers
+    )
 
     Write-host "Servers : " $SQLServers
     $haserror = 0
@@ -30,4 +35,3 @@ param(
 }
 
 
-Invoke-VerifyParameters -SQLServers $SQLServers 
