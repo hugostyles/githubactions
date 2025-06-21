@@ -12,8 +12,6 @@ on:
 jobs:
   first-job:
     runs-on: windows-latest
-    env:
-      INSTANCELIST: ${{ github.event.inputs.sqinstancenames }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
