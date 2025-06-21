@@ -15,7 +15,9 @@ jobs:
   first-job:
     runs-on: windows-latest
     env:
-        INSTANCELIST: ${{ vars.INSTANCELIST }}
+      # Set environment variables from the input
+      # This allows the job to access the input values as environment variables
+        INSTANCELIST: ${{ github.event.inputs.sqinstancenames }}
     steps:
         - name: Checkout repository
           uses: actions/checkout@v4
