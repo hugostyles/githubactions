@@ -29,7 +29,13 @@ jobs:
           shell: powershell
           run: |
             Write-Host "INSTANCELIST value: $env:INSTANCELIST"
-
+        - name: Loop through INSTANCELIST and print each value
+          shell: powershell
+          run: |
+            $instances = $env:INSTANCELIST -split ','
+            foreach ($instance in $instances) {
+              Write-Host "Instance: $instance"
+            }
 
 
         
