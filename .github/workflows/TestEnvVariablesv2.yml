@@ -1,4 +1,4 @@
-name: Testing Worklow
+name: Testing Variables
 
 # Controls when the workflow will run, e.g. manually
 on:
