@@ -15,14 +15,14 @@ jobs:
   first-job:
     runs-on: windows-latest
     env:
-        var_instance: ${{ vars.INSTANCELIST }}
+        INSTANCELIST: ${{ vars.INSTANCELIST }}
     steps:
         - name: Checkout repository
           uses: actions/checkout@v4
         - name: Show INSTANCELIST
           shell: powershell
           run: |
-            Write-Host "INSTANCELIST value: vars.var_instance"
+            Write-Host "INSTANCELIST value: $env:INSTANCELIST"
 
 
 
