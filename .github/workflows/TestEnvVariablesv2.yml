@@ -9,22 +9,20 @@ on:
         required: true
         default: 'F9NBPX3\SQL2019'
 
-
-  env:
-        var_instance: ${{ vars.INSTANCELIST }}
-        
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
   first-job:
     runs-on: windows-latest
+    env:
+        var_instance: ${{ vars.INSTANCELIST }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Show INSTANCELIST
-        shell: powershell
-        run: |
-          Write-Host "INSTANCELIST value: vars.var_instance"
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Show INSTANCELIST
+          shell: powershell
+          run: |
+            Write-Host "INSTANCELIST value: vars.var_instance"
 
 
 
