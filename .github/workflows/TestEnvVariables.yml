@@ -1,0 +1,26 @@
+name: Testing Worklow
+
+# Controls when the workflow will run, e.g. manually
+on:
+  workflow_dispatch:
+    inputs:      
+      sqinstancenames:        
+        description: 'Comma-separated list of SQL Server instance names (e.g., SERVER1,SERVER2)'
+        required: true
+        default: 'F9NBPX3\SQL2019'
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  first-job:
+    runs-on: windows-latest
+    env:
+      INSTANCELIST: ${{ github.event.inputs.sqinstancenames }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Show INSTANCELIST
+        shell: powershell
+        run:Write-Host 'INSTANCELIST value: $env:INSTANCELIST'
+
+
+
+        
