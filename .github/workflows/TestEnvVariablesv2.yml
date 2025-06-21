@@ -18,7 +18,7 @@ jobs:
       - name: Show INSTANCELIST
         shell: powershell
         run: |
-          Write-Host "INSTANCELIST value: $env:INSTANCELIST"
+          Write-Host "INSTANCELIST value: vars.INSTANCELIST"
 
 
 
