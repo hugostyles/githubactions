@@ -15,7 +15,7 @@ jobs:
   first-job:
     runs-on: windows-latest
     env:
-        INSTANCELIST: "TEST"
+        INSTANCELIST: ${{ vars.INSTANCELIST }}
     steps:
         - name: Checkout repository
           uses: actions/checkout@v4
