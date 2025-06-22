@@ -21,13 +21,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install DBAtools
+      - name: Setup DBATools
+        # Step to set up the PowerShell environment
         shell: powershell
-        run: |
-          if (-not (Get-Module -ListAvailable -Name dbatools)) {
-            Install-Module dbatools -Force -Scope CurrentUser
-          }
-          Import-Module dbatools
+        run: Import-Module dbatools
 
 
       - name: Validate Parameters
