@@ -24,7 +24,7 @@ jobs:
           name: serverlist
           path: serverlist.txt
 
-  approval1:
+  Approval_Gate_1:
     runs-on: windows-latest
     needs: Prepare
     environment:
@@ -35,7 +35,7 @@ jobs:
 
   Pre_Build:
     runs-on: windows-latest
-    needs: approval1
+    needs: Approval_Gate_1
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -78,7 +78,7 @@ jobs:
             Write-Host "Build_configuration Server: $server"
           }
 
-  approval2:
+  Approval_Gate_2:
     runs-on: windows-latest
     needs: Build_Configuration
     environment:
@@ -89,7 +89,7 @@ jobs:
 
   SQL_Failovers_and_Restarts:
     runs-on: windows-latest
-    needs: approval2
+    needs: Approval_Gate_2
     steps:
       - uses: actions/download-artifact@v4
         with:
