@@ -42,7 +42,7 @@ jobs:
       - name: Create servernames file
         shell: powershell
         run: |
-          Set-Content -Path servernames.txt -Value "${{ github.event.inputs.servernames }}" -split ','
+          Set-Content -Path servernames.txt -Value "${{ github.event.inputs.servernames }}"
 
       - name: Upload servernames artifact
         uses: actions/upload-artifact@v4
