@@ -2,11 +2,15 @@ name: Build Automation Jobs
 
 on:
   workflow_dispatch:
-    inputs:
-      serverlist:
-        description: 'Comma-separated list of servers'
+    inputs:      
+      servernames:        
+        description: 'List of servers you require the run the build on (enter in Primary, Secondary, RS order) e.g., SERVER1,SERVER2'
         required: true
-        default: 'SERVER1,SERVER2,SERVER3'
+        default: 'F9NBPX3'
+      authority:        
+        description: 'England, Scotland, IoM, NI, Jersey, Wales etc'
+        required: true
+        default: 'England'
 
 jobs:
 
@@ -14,15 +18,40 @@ jobs:
   Prepare:
     runs-on: windows-latest
     steps:
-      - name: Create serverlist file
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell environment
+        # Step to set up the PowerShell environment
+        shell: powershell
+        run: Import-Module dbatools
+
+
+      - name: Validate Parameters
+        # Validate the input parameters to ensure they are not empty
         shell: powershell
         run: |
-          Set-Content -Path serverlist.txt -Value "${{ github.event.inputs.serverlist }}"
-      - name: Upload serverlist artifact
+          Write-Host "Validating Parameters."
+          $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
+          $servernames = "${{ github.event.inputs.servernames }}"
+          $authority = "${{ github.event.inputs.authority }}"
+
+          # Execute the script to validate the parameters
+          & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop        
+        
+      - name: Create servernames file
+        shell: powershell
+        run: |
+          Set-Content -Path servernames.txt -Value "${{ github.event.inputs.servernames }}"
+
+      - name: Upload servernames artifact
         uses: actions/upload-artifact@v4
         with:
-          name: serverlist
-          path: serverlist.txt
+          name: servernames
+          path: servernames.txt
+
+          # Get SQL Server instances from the provided server names
+
 
   Approval_Gate_1:
     runs-on: windows-latest
@@ -39,14 +68,17 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in Pre Build
+          name: servernames
+
+      - name: Print servernames in Pre Build
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Pre Build Server: $server"
           }
+
+      
 
   Database_Deployments:
     runs-on: windows-latest
@@ -54,11 +86,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in database_deployments
+          name: servernames
+      - name: Print servernames in database_deployments
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "database_deployments Server: $server"
           }
@@ -69,11 +101,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in build_configuration
+          name: servernames
+      - name: Print servernames in build_configuration
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Build_configuration Server: $server"
           }
@@ -93,11 +125,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in SQL_Failovers_and_Restarts
+          name: servernames
+      - name: Print servernames in SQL_Failovers_and_Restarts
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "SQL_Failovers_and_Restarts Server: $server"
           }
@@ -108,11 +140,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in Post_Restart_Configuration
+          name: servernames
+      - name: Print servernames in Post_Restart_Configuration
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Post_Restart_Configuration Server: $server"
           }
@@ -123,11 +155,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: serverlist
-      - name: Print serverlist in Reporting_and_Monitoring
+          name: servernames
+      - name: Print servernames in Reporting_and_Monitoring
         shell: powershell
         run: |
-          $servers = Get-Content serverlist.txt -Raw
+          $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Post Restart Configuration Server: $server"
           }
