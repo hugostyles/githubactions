@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PowerShell environment
+      #- name: Setup PowerShell environment
         # Step to set up the PowerShell environment
         #shell: powershell
         #run: Import-Module dbatools
