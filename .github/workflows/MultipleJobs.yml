@@ -33,7 +33,7 @@ jobs:
       - name: Wait for approval before proceeding. Verify parameters
         run: echo "Approval 1 granted."
 
-  Pre Build:
+  Pre_Build:
     runs-on: windows-latest
     needs: approval1
     steps:
@@ -48,83 +48,83 @@ jobs:
             Write-Host "Pre Build Server: $server"
           }
 
-  Database Deployments:
+  Database_Deployments:
     runs-on: windows-latest
-    needs: Pre Build
+    needs: Pre_Build
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: serverlist
-      - name: Print serverlist in database deployments
+      - name: Print serverlist in database_deployments
         shell: powershell
         run: |
           $servers = Get-Content serverlist.txt -Raw
           foreach ($server in $servers -split ',') {
-            Write-Host "database deployments Server: $server"
+            Write-Host "database_deployments Server: $server"
           }
 
-  Build Configuration:
+  Build_Configuration:
     runs-on: windows-latest
-    needs: Database Deployments
+    needs: Database_Deployments
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: serverlist
-      - name: Print serverlist in build configuration
+      - name: Print serverlist in build_configuration
         shell: powershell
         run: |
           $servers = Get-Content serverlist.txt -Raw
           foreach ($server in $servers -split ',') {
-            Write-Host "Build configuration Server: $server"
+            Write-Host "Build_configuration Server: $server"
           }
 
   approval2:
     runs-on: windows-latest
-    needs: Build Configuration
+    needs: Build_Configuration
     environment:
       name: approval-gate-2
     steps:
       - name: Wait for approval before proceeding with failovers and restarts.
         run: echo "Approval 2 granted."
 
-  SQL Failovers and Restarts:
+  SQL_Failovers_and_Restarts:
     runs-on: windows-latest
     needs: approval2
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: serverlist
-      - name: Print serverlist in sql failovers and restarts
+      - name: Print serverlist in SQL_Failovers_and_Restarts
         shell: powershell
         run: |
           $servers = Get-Content serverlist.txt -Raw
           foreach ($server in $servers -split ',') {
-            Write-Host "sql failovers and restarts Server: $server"
+            Write-Host "SQL_Failovers_and_Restarts Server: $server"
           }
 
-  Post Restart Configuration:
+  Post_Restart_Configuration:
     runs-on: windows-latest
-    needs: SQL Failovers and Restarts
+    needs: SQL_Failovers_and_Restarts
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: serverlist
-      - name: Print serverlist in Post Restart Configuration
+      - name: Print serverlist in Post_Restart_Configuration
         shell: powershell
         run: |
           $servers = Get-Content serverlist.txt -Raw
           foreach ($server in $servers -split ',') {
-            Write-Host "Post Restart Configuration Server: $server"
+            Write-Host "Post_Restart_Configuration Server: $server"
           }
 
-  Reporting and Monitoring:
+  Reporting_and_Monitoring:
     runs-on: windows-latest
-    needs: Post Restart Configuration
+    needs: Post_Restart_Configuration
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: serverlist
-      - name: Print serverlist in Post Restart Configuration
+      - name: Print serverlist in Reporting_and_Monitoring
         shell: powershell
         run: |
           $servers = Get-Content serverlist.txt -Raw
