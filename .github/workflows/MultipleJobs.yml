@@ -50,7 +50,46 @@ jobs:
           name: servernames
           path: servernames.txt
 
-          # Get SQL Server instances from the provided server names
+      # Get SQL Server instances from the provided server names
+      - name: Get SQL Instance names
+        # Get SQL Server instances from the provided server names
+        # This step uses the dbatools module to retrieve SQL Server instances
+        shell: powershell
+        run: |
+          $servernames = "${{ github.event.inputs.servernames }}" -split ','
+          
+          # Initialize the instances.txt file to ensure it's empty before writing new data
+          Set-Content -Path instances.txt -Value ""
+
+          Write-Host "============================================================"
+          Write-Host "Getting SQL Server instances for ${servernames}"
+          foreach ($server in $servernames) {
+            # Loop through each server name provided in the input
+            Write-Host "Processing server: $server"
+            try {
+            $instances = Get-DbaService -ComputerName $server -Type Engine -EnableException |
+            ForEach-Object { "$($_.ComputerName)\$($_.InstanceName)" }
+            Write-Host "SQL Server instances found:"
+            $instances
+            Write-Host "============================================================"
+            # Save instances to file for later steps
+            Add-Content -Path instances.txt -Value ($instances -join "`n")
+                            
+            } catch {
+            Write-Host "Error: Failed to get SQL Server instances for ${server}."
+            Write-Host "Exception Message: $($_.Exception.Message)"
+            Write-Host "Exception Details: $($_ | Out-String)"
+            exit 1
+            }
+            }
+            #Cleanup the empty lines in the instances.txt file
+            (Get-Content -Path instances.txt) | Where-Object { $_.Trim() -ne "" } | Set-Content -Path instances.txt           
+
+      - name: Upload instances artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sqlinstances
+          path: instances.txt
 
 
   Approval_Gate_1:
