@@ -1,0 +1,133 @@
+name: Build Automation Jobs
+
+on:
+  workflow_dispatch:
+    inputs:
+      serverlist:
+        description: 'Comma-separated list of servers'
+        required: true
+        default: 'SERVER1,SERVER2,SERVER3'
+
+jobs:
+
+
+  Prepare:
+    runs-on: windows-latest
+    steps:
+      - name: Create serverlist file
+        shell: powershell
+        run: |
+          Set-Content -Path serverlist.txt -Value "${{ github.event.inputs.serverlist }}"
+      - name: Upload serverlist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: serverlist
+          path: serverlist.txt
+
+  approval1:
+    runs-on: windows-latest
+    needs: Prepare
+    environment:
+      name: approval-gate-1
+    steps:
+      - name: Wait for approval before proceeding. Verify parameters
+        run: echo "Approval 1 granted."
+
+  Pre Build:
+    runs-on: windows-latest
+    needs: approval1
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in Pre Build
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "Pre Build Server: $server"
+          }
+
+  Database Deployments:
+    runs-on: windows-latest
+    needs: Pre Build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in database deployments
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "database deployments Server: $server"
+          }
+
+  Build Configuration:
+    runs-on: windows-latest
+    needs: Database Deployments
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in build configuration
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "Build configuration Server: $server"
+          }
+
+  approval2:
+    runs-on: windows-latest
+    needs: Build Configuration
+    environment:
+      name: approval-gate-2
+    steps:
+      - name: Wait for approval before proceeding with failovers and restarts.
+        run: echo "Approval 2 granted."
+
+  SQL Failovers and Restarts:
+    runs-on: windows-latest
+    needs: approval2
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in sql failovers and restarts
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "sql failovers and restarts Server: $server"
+          }
+
+  Post Restart Configuration:
+    runs-on: windows-latest
+    needs: SQL Failovers and Restarts
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in Post Restart Configuration
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "Post Restart Configuration Server: $server"
+          }
+
+  Reporting and Monitoring:
+    runs-on: windows-latest
+    needs: Post Restart Configuration
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: serverlist
+      - name: Print serverlist in Post Restart Configuration
+        shell: powershell
+        run: |
+          $servers = Get-Content serverlist.txt -Raw
+          foreach ($server in $servers -split ',') {
+            Write-Host "Post Restart Configuration Server: $server"
+          }
