@@ -137,57 +137,68 @@ jobs:
             Write-Host "Pre Build Server: $server"
           }
 
-      - name: SQL_DBAWindowsClusterChecks
+      - name: Windows Failover Cluster checks
+        # This step checks the Windows Failover Cluster configuration
         shell: powershell
         run: |
           Write-Host "Windows Cluster Checks"
 
-      - name: SQL_DBASQLCollationCheck
+      - name: SQL Server Collation checks
+        # This step checks the SQL Server collation settings
         shell: powershell
         run: |
           Write-Host "Windows collation checks"
 
-      - name: SQL_DBACheckSQLInstallPath
+      - name: SQL Installation Path checks
+        # This step checks the SQL Server installation path
         shell: powershell
         run: |
           Write-Host "Check SQL Install Path"
       
-      - name: SQL_DBACheckSQLBuild
+      - name: SQL Build Version checks
+        # This step checks the SQL Server build version
         shell: powershell
         run: |
           Write-Host "Check SQL Build"
 
-      - name: SQL_DBACheckSQLInstanceName
+      - name: SQL Instance Name checks
+        # This step checks the SQL Server instance name
         shell: powershell
         run: |
-          Write-Host "check SQL Instance Name"
+          Write-Host "Check SQL Instance Name"
 
-      - name: SQL_DBACheckDBADefaultPaths
+      - name: SQL Default Paths checks
+        # This step checks the default paths for SQL Server data and log files
         shell: powershell
         run: |
           Write-Host "check default paths"
 
-      - name: SQL_DBACheckSQLPort
+      - name: SQL Port checks
+        # This step checks the SQL Server port configuration
         shell: powershell
         run: |
           Write-Host "Check SQL Port"
 
-      - name: SQL_DBACheckWinVerSQLEdition
+      - name: Windows version and SQL Edition checks
+        # This step checks the Windows version and SQL Server edition
         shell: powershell
         run: |
           Write-Host "Check Windows Version and SQL Edition"
 
-      - name: SQL_DBACheckSQLWindowsAuth
+      - name: SQL Windows Authentication checks
+        # This step checks the SQL Server Windows Authentication configuration
         shell: powershell
         run: |
           Write-Host "Check SQL Windows Authentication"
 
-      - name: SQL_DBASQLCheckAGName
+      - name: SQL Always On AG name checks
+        # This step checks the SQL Server Always On Availability Group name
         shell: powershell
         run: |
           Write-Host "Check SQL Always On AG Name"
 
-      - name: SQL_DBASQLAGBackupPreferences
+      - name: SQL Always On Backups Preferences checks
+        # This step checks the SQL Server Always On Availability Group backup preferences
         shell: powershell
         run: |
           Write-Host "Check SQL Always On AG Backup Preferences"
@@ -210,6 +221,48 @@ jobs:
           foreach ($server in $servers -split ',') {
             Write-Host "database_deployments Server: $server"
           }
+
+      - name: Deploy EMISGroupDBA Database
+        # This step deploys the EMISGroupDBA database
+        shell: powershell
+        run: |
+          Write-Host "Deploy EMISGroupDBA Database"
+
+      - name: Configure TempDB
+        # This step configures the TempDB settings
+        shell: powershell
+        run: |
+          Write-Host "Configure TempDB Settings"
+
+      - name: Set EMISGroupDBA Service
+        # This step sets the EMISGroupDBA service
+        shell: powershell
+        run: |
+          Write-Host "Set EMISGroupDBA Service"
+
+      - name: Configure SQL Agent Job Operator 
+        # Service Manager needs this job to run first
+        # This step sets up the SQL_DBAAgentJobOperator service
+        shell: powershell
+        run: |
+          Write-Host "Configure SQL Agent Job Operator"
+
+      - name: Deploy EMISServiceManager Database
+        # This step deploys the EMISServiceManager database
+        shell: powershell
+        run: |
+          Write-Host "Deploy EMISServiceManager Database"
+
+      - name: Deploy BackoutStorage Database
+        # This step deploys the BackoutStorage database
+        shell: powershell
+        run: |
+          Write-Host "Deploy BackoutStorage Database"
+
+
+
+
+
 
   Build_Configuration:
     runs-on: [self-hosted, windows]
