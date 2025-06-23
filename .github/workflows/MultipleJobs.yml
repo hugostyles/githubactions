@@ -141,67 +141,67 @@ jobs:
         # This step checks the Windows Failover Cluster configuration
         shell: powershell
         run: |
-          Write-Host "Windows Cluster Checks"
+          Write-Host "SQL_DBAWindowsClusterChecks"
 
       - name: SQL Server Collation checks
         # This step checks the SQL Server collation settings
         shell: powershell
         run: |
-          Write-Host "Windows collation checks"
+          Write-Host "SQL_DBASQLCollationCheck"
 
       - name: SQL Installation Path checks
         # This step checks the SQL Server installation path
         shell: powershell
         run: |
-          Write-Host "Check SQL Install Path"
+          Write-Host "SQL_DBACheckSQLInstallPath"
       
       - name: SQL Build Version checks
         # This step checks the SQL Server build version
         shell: powershell
         run: |
-          Write-Host "Check SQL Build"
+          Write-Host "SQL_DBACheckSQLBuild"
 
       - name: SQL Instance Name checks
         # This step checks the SQL Server instance name
         shell: powershell
         run: |
-          Write-Host "Check SQL Instance Name"
+          Write-Host "SQL_DBACheckSQLInstanceName"
 
       - name: SQL Default Paths checks
         # This step checks the default paths for SQL Server data and log files
         shell: powershell
         run: |
-          Write-Host "check default paths"
+          Write-Host "SQL_DBACheckDBADefaultPaths"
 
       - name: SQL Port checks
         # This step checks the SQL Server port configuration
         shell: powershell
         run: |
-          Write-Host "Check SQL Port"
+          Write-Host "SQL_DBACheckSQLPort"
 
       - name: Windows version and SQL Edition checks
         # This step checks the Windows version and SQL Server edition
         shell: powershell
         run: |
-          Write-Host "Check Windows Version and SQL Edition"
+          Write-Host "SQL_DBACheckWinVerSQLEdition"
 
       - name: SQL Windows Authentication checks
         # This step checks the SQL Server Windows Authentication configuration
         shell: powershell
         run: |
-          Write-Host "Check SQL Windows Authentication"
+          Write-Host "SQL_DBACheckSQLWindowsAuth"
 
       - name: SQL Always On AG name checks
         # This step checks the SQL Server Always On Availability Group name
         shell: powershell
         run: |
-          Write-Host "Check SQL Always On AG Name"
+          Write-Host "SQL_DBASQLCheckAGName"
 
       - name: SQL Always On Backups Preferences checks
         # This step checks the SQL Server Always On Availability Group backup preferences
         shell: powershell
         run: |
-          Write-Host "Check SQL Always On AG Backup Preferences"
+          Write-Host "SQL_DBASQLAGBackupPreferences"
 
 
 
@@ -226,38 +226,38 @@ jobs:
         # This step deploys the EMISGroupDBA database
         shell: powershell
         run: |
-          Write-Host "Deploy EMISGroupDBA Database"
+          Write-Host "SQL_DBADeployEMISGroupDBA"
 
       - name: Configure TempDB
         # This step configures the TempDB settings
         shell: powershell
         run: |
-          Write-Host "Configure TempDB Settings"
+          Write-Host "SQL_DBAAdjustTempDB"
 
       - name: Set EMISGroupDBA Service
         # This step sets the EMISGroupDBA service
         shell: powershell
         run: |
-          Write-Host "Set EMISGroupDBA Service"
+          Write-Host "SQL_DBAEMISGroupDBAService"
 
       - name: Configure SQL Agent Job Operator 
         # Service Manager needs this job to run first
         # This step sets up the SQL_DBAAgentJobOperator service
         shell: powershell
         run: |
-          Write-Host "Configure SQL Agent Job Operator"
+          Write-Host "SQL_DBAAgentJobOperator"
 
       - name: Deploy EMISServiceManager Database
         # This step deploys the EMISServiceManager database
         shell: powershell
         run: |
-          Write-Host "Deploy EMISServiceManager Database"
+          Write-Host "SQL_DBAEMISServiceManagerDeploy"
 
       - name: Deploy BackoutStorage Database
         # This step deploys the BackoutStorage database
         shell: powershell
         run: |
-          Write-Host "Deploy BackoutStorage Database"
+          Write-Host "SQL_CreateBackoutStorageDB"
 
 
 
@@ -279,6 +279,57 @@ jobs:
             Write-Host "Build_configuration Server: $server"
           }
 
+      - name: Set DBA Agent Owner
+        # This step sets the DBA Agent Owner
+        # Must be run before the EMIS Group DBA Config job
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAAgentJobOwner"
+
+      - name: Run EMISGroupDBA Configuration Job
+        # This step runs the EMISGroupDBA configuration job
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBARunEMISGroupDBAConfigJob"
+
+
+      - name: Check SQL Linked Servers
+        # This step checks the SQL Linked Servers configuration
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckSysServers"
+
+      - name: Set Read Committed Snapshot Isolation
+        # This step sets the Read Committed Snapshot Isolation
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAReadCommittedSnapshot"
+
+      - name: Check Database Locations
+        # This step checks the database locations
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckDBLocations"
+
+      - name: SQL Agent Configuration
+        # This step configures the SQL Agent settings
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBASQLAgentConfig"
+
+      - name: Check SQL Server Max Server Memory
+        # This step checks the SQL Server Max Server Memory settings
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckSQLMaxServerMemory"
+          
+      - name: Check Database Recovery Models
+        # This step checks the recovery models of the databases
+        shell: powershell
+        run: |
+          Write-Host "SQL_CheckDBRecoveryModels"      
+
+
   SQL_Failovers_and_Restarts:
     runs-on: [self-hosted, windows]
     needs: Build_Configuration
@@ -293,6 +344,10 @@ jobs:
           foreach ($server in $servers -split ',') {
             Write-Host "SQL_Failovers_and_Restarts Server: $server"
           }
+
+
+
+
 
   Post_Restart_Configuration:
     runs-on: [self-hosted, windows]
