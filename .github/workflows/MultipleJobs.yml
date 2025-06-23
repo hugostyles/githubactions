@@ -345,8 +345,72 @@ jobs:
             Write-Host "SQL_Failovers_and_Restarts Server: $server"
           }
 
+      - name: Check Is HADR Enabled
+        # This step checks if High Availability and Disaster Recovery (HADR) is enabled
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckIsHADREnabled"  
+          
+      - name: Check AG Database Health
+        # This step checks the health of the Always On Availability Group (AG) databases
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckAGDBHealthDetection"  
+
+      - name: Check AG Failover Mode
+        # This step checks the failover mode of the Always On Availability Group (AG)
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckAGFailoverMode"  
 
 
+      - name: Check AG Endpoint URL
+        # This step checks the URL of the Always On Availability Group (AG) endpoint
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBASQLCheckAGEndpointURL"  
+
+      - name: Check AG RS Allow Connections
+        # This step checks if the RS replica connections are allowed for the Always On Availability Group (AG)
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBASQLCheckSQLRSAllowConnections"  
+
+      - name: Check AlwaysOn Extended Events is enabled
+        # This step checks if the Always On Extended Events are enabled
+        shell: powershell
+        run: |
+          Write-Host "SQL_CheckXEAlwaysOn"  
+
+      - name: Set AGs to Manual Failover Mode
+        # This step sets the Always On Availability Groups (AGs) to manual failover mode
+        shell: powershell
+        run: |
+          Write-Host "SQL_SetAGFailoverModeManual"  
+
+      - name: Restart SQL Server
+        # This step restarts the SQL Server service
+        shell: powershell
+        run: |
+          Write-Host "SQL_RestartSQL"  
+
+      - name: Set AGs to Automatic Failover Mode
+        # This step sets the Always On Availability Groups (AGs) to automatic failover mode
+        shell: powershell
+        run: |
+          Write-Host "SQL_SetAGFailoverModeAutomatic"  
+
+      - name: Test a planned SQL Server Failover
+        # This step tests a planned failover of the SQL Server Always On Availability Groups (AGs)
+        shell: powershell
+        run: |
+          Write-Host "SQL_FailoverAlwaysOnGroupsplanned"  
+
+      - name: Test an unplanned SQL Server Failover
+        # This step tests an unplanned failover of the SQL Server Always On Availability Groups (AGs)
+        shell: powershell
+        run: |
+          Write-Host "SQL_FailoverAlwaysOnGroupsUnplanned"  
 
 
   Post_Restart_Configuration:
@@ -364,6 +428,19 @@ jobs:
             Write-Host "Post_Restart_Configuration Server: $server"
           }
 
+      - name: Check TempDB
+        # This step checks the TempDB configuration
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBACheckSQLTempDB"  
+
+      - name: Check AG Database Health
+        # This step checks the health of the Always On Availability Group (AG) databases after restart
+        shell: powershell
+        run: |
+          Write-Host "SQL_CheckAGHealth"  
+
+
   Reporting_and_Monitoring:
     runs-on: [self-hosted, windows]
     needs: Post_Restart_Configuration
@@ -378,3 +455,45 @@ jobs:
           foreach ($server in $servers -split ',') {
             Write-Host "Post Restart Configuration Server: $server"
           }
+
+      - name: Eweblogs - Configure EMISHealthBusinessIntelligence
+        # This step configures the EMISHealthBusinessIntelligence weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogsEMISHealthBusinessIntelligence"  
+
+      - name: Eweblogs - Configure EMISWebMonitoringArchive
+        # This step configures the EMISWebMonitoringArchive weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogsEMISWebMonitoringArchive"        
+      
+      - name: Eweblogs - Configure EMISGroupDBA Configuration Linked Servers
+        # This step configures the EMISGroupDBA Configuration Linked Servers weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogsEMISGroupDBAConfigLinkedServers"        
+
+      - name: Eweblogs - Configure EMISGroupDBA ReportingServers
+        # This step configures the EMISGroupDBA ReportingServers weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogsEMISGroupDBAReportingServers"  
+          
+      - name: Eweblogs - Configure ReportingServer RegisteredServers
+        # This step configures the ReportingServer RegisteredServers weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogsReportingServerRegisteredServers" 
+
+      - name: Eweblogs - Configure System Response Times
+        # This step configures the System Response Times weblogs
+        shell: powershell
+        run: |
+          Write-Host "SQL_DBAEweblogSystemResponseTime" 
+
+      - name: SentryOne configuration
+        # This step configures the SentryOne monitoring tool
+        shell: powershell
+        run: |
+          Write-Host "SQL_SentryOneDBAdditions"       
