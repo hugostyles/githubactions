@@ -19,6 +19,7 @@ jobs:
     runs-on: [self-hosted, windows]
     steps:
       - name: Checkout repository
+        #This step checks out the repository so that the workflow can access its contents
         uses: actions/checkout@v4
 
       - name: Setup DBATools
@@ -39,10 +40,30 @@ jobs:
           # Execute the script to validate the parameters
           & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop        
         
-      - name: Create servernames file
+      - name: Get SQL Server names
+        # This step retrieves the SQL Server names from the provided server names ready to upload as an artifact
         shell: powershell
         run: |
-          Set-Content -Path servernames.txt -Value "${{ github.event.inputs.servernames }}"
+          $servernames = "${{ github.event.inputs.servernames }}" -split ','
+          # Initialize the servernames.txt file to ensure it's empty before writing new data
+          Set-Content -Path servernames.txt -Value ""
+          Write-Host "============================================================"
+          foreach ($server in $servernames) {
+            # Loop through each server name provided in the input
+            Write-Host "Processing server: $server"
+            try {
+            Add-Content -Path servernames.txt -Value ($server -join "`n")
+                            
+            } catch {
+            Write-Host "Error: Failed to get SQL Server names for ${server}."
+            Write-Host "Exception Message: $($_.Exception.Message)"
+            Write-Host "Exception Details: $($_ | Out-String)"
+            exit 1
+            }
+            }
+            #Cleanup the empty lines in the instances.txt file
+            (Get-Content -Path servernames.txt) | Where-Object { $_.Trim() -ne "" } | Set-Content -Path servernames.txt 
+
 
       - name: Upload servernames artifact
         uses: actions/upload-artifact@v4
@@ -50,10 +71,9 @@ jobs:
           name: servernames
           path: servernames.txt
 
-      # Get SQL Server instances from the provided server names
       - name: Get SQL Instance names
         # Get SQL Server instances from the provided server names
-        # This step uses the dbatools module to retrieve SQL Server instances
+        # This step uses the dbatools module to retrieve SQL Server instances ready to upload as an artifact
         shell: powershell
         run: |
           $servernames = "${{ github.event.inputs.servernames }}" -split ','
@@ -93,7 +113,7 @@ jobs:
 
 
   Approval_Gate_1:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Prepare
     environment:
       name: approval-gate-1
@@ -102,7 +122,7 @@ jobs:
         run: echo "Approval 1 granted."
 
   Pre_Build:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Approval_Gate_1
     steps:
       - uses: actions/download-artifact@v4
@@ -116,11 +136,10 @@ jobs:
           foreach ($server in $servers -split ',') {
             Write-Host "Pre Build Server: $server"
           }
-
       
 
   Database_Deployments:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Pre_Build
     steps:
       - uses: actions/download-artifact@v4
@@ -135,7 +154,7 @@ jobs:
           }
 
   Build_Configuration:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Database_Deployments
     steps:
       - uses: actions/download-artifact@v4
@@ -150,7 +169,7 @@ jobs:
           }
 
   SQL_Failovers_and_Restarts:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Build_Configuration
     steps:
       - uses: actions/download-artifact@v4
@@ -165,7 +184,7 @@ jobs:
           }
 
   Post_Restart_Configuration:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: SQL_Failovers_and_Restarts
     steps:
       - uses: actions/download-artifact@v4
@@ -180,7 +199,7 @@ jobs:
           }
 
   Reporting_and_Monitoring:
-    runs-on: windows-latest
+    runs-on: [self-hosted, windows]
     needs: Post_Restart_Configuration
     steps:
       - uses: actions/download-artifact@v4
