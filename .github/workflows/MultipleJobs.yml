@@ -136,7 +136,65 @@ jobs:
           foreach ($server in $servers -split ',') {
             Write-Host "Pre Build Server: $server"
           }
+
+      - name: SQL_DBAWindowsClusterChecks
+        shell: powershell
+        run: |
+          Write-Host "Windows Cluster Checks"
+
+      - name: SQL_DBASQLCollationCheck
+        shell: powershell
+        run: |
+          Write-Host "Windows collation checks"
+
+      - name: SQL_DBACheckSQLInstallPath
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Install Path"
       
+      - name: SQL_DBACheckSQLBuild
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Build"
+
+      - name: SQL_DBACheckSQLInstanceName
+        shell: powershell
+        run: |
+          Write-Host "check SQL Instance Name"
+
+      - name: SQL_DBACheckDBADefaultPaths
+        shell: powershell
+        run: |
+          Write-Host "check default paths"
+
+      - name: SQL_DBACheckSQLPort
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Port"
+
+      - name: SQL_DBACheckWinVerSQLEdition
+        shell: powershell
+        run: |
+          Write-Host "Check Windows Version and SQL Edition"
+
+      - name: SQL_DBACheckSQLWindowsAuth
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Windows Authentication"
+
+      - name: SQL_DBASQLCheckAGName
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Always On AG Name"
+
+      - name: SQL_DBASQLAGBackupPreferences
+        shell: powershell
+        run: |
+          Write-Host "Check SQL Always On AG Backup Preferences"
+
+
+
+
 
   Database_Deployments:
     runs-on: [self-hosted, windows]
