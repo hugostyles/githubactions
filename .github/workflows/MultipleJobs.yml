@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:      
       servernames:        
-        description: 'List of servers you require the run the build on (enter in Primary, Secondary, RS order) e.g., SERVER1,SERVER2'
+        description: 'List of servers you require the run the build on (enter in Primary,Secondary,RS order) e.g., SERVER1,SERVER2'
         required: true
         default: 'F9NBPX3'
       authority:        
@@ -44,7 +44,7 @@ jobs:
         # This step retrieves the SQL Server names from the provided server names ready to upload as an artifact
         shell: powershell
         run: |
-          $servernames = "${{ github.event.inputs.servernames }}" -split ','
+          $servernames = "${{ github.event.inputs.servernames }}" -split ',' | ForEach-Object { $_.Trim() }
           # Initialize the servernames.txt file to ensure it's empty before writing new data
           Set-Content -Path servernames.txt -Value ""
           Write-Host "============================================================"
@@ -76,7 +76,7 @@ jobs:
         # This step uses the dbatools module to retrieve SQL Server instances ready to upload as an artifact
         shell: powershell
         run: |
-          $servernames = "${{ github.event.inputs.servernames }}" -split ','
+          $servernames = "${{ github.event.inputs.servernames }}" -split ',' | ForEach-Object { $_.Trim() }
           
           # Initialize the instances.txt file to ensure it's empty before writing new data
           Set-Content -Path instances.txt -Value ""
