@@ -149,18 +149,9 @@ jobs:
             Write-Host "Build_configuration Server: $server"
           }
 
-  Approval_Gate_2:
-    runs-on: windows-latest
-    needs: Build_Configuration
-    environment:
-      name: approval-gate-2
-    steps:
-      - name: Wait for approval before proceeding with failovers and restarts.
-        run: echo "Approval 2 granted."
-
   SQL_Failovers_and_Restarts:
     runs-on: windows-latest
-    needs: Approval_Gate_2
+    needs: Build_Configuration
     steps:
       - uses: actions/download-artifact@v4
         with:
