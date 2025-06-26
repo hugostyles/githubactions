@@ -184,14 +184,17 @@ jobs:
         with:
           name: servernames
 
-      - name: Print servernames in Pre Build
+      - name: Print Server names and SQL instances in Pre Build
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Pre Build Server: $server"
           }
-
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
+          }
       - name: Windows Failover Cluster checks
         # This step checks the Windows Failover Cluster configuration
         shell: powershell
@@ -234,7 +237,7 @@ jobs:
         run: |
           Write-Host "SQL_DBACheckSQLPort"
 
-      - name: Windows version and SQL Edition checks
+      - name: Windows Version and SQL Edition checks
         # This step checks the Windows version and SQL Server edition
         shell: powershell
         run: |
@@ -269,12 +272,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: servernames
-      - name: Print servernames in database_deployments
+      - name: Print Server names and SQL instances in database_deployments
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "database_deployments Server: $server"
+          }
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
           }
 
       - name: Deploy EMISGroupDBA Database
@@ -326,12 +333,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: servernames
-      - name: Print servernames in build_configuration
+      - name: Print Server names and SQL instances in build_configuration
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Build_configuration Server: $server"
+          }
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
           }
 
       - name: Set DBA Agent Owner
@@ -392,12 +403,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: servernames
-      - name: Print servernames in SQL_Failovers_and_Restarts
+      - name: Print Server names and SQL instances in SQL_Failovers_and_Restarts
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "SQL_Failovers_and_Restarts Server: $server"
+          }
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
           }
 
       - name: Check Is HADR Enabled
@@ -475,12 +490,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: servernames
-      - name: Print servernames in Post_Restart_Configuration
+      - name: Print Server names and SQL instances in Post_Restart_Configuration
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Post_Restart_Configuration Server: $server"
+          }
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
           }
 
       - name: Check TempDB
@@ -503,12 +522,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: servernames
-      - name: Print servernames in Reporting_and_Monitoring
+      - name: Print Server names and SQL instances in Reporting_and_Monitoring
         shell: powershell
         run: |
           $servers = Get-Content servernames.txt -Raw
           foreach ($server in $servers -split ',') {
             Write-Host "Post Restart Configuration Server: $server"
+          }
+          $instances = Get-Content instances.txt -Raw
+          foreach ($instance in $instances -split ',') {
+            Write-Host "Pre Build Instance: $instance"
           }
 
       - name: Eweblogs - Configure EMISHealthBusinessIntelligence
