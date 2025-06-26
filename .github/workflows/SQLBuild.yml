@@ -1,4 +1,4 @@
-name: Build Automation Jobs
+name: Run SQL Build Automation
 
 on:
   workflow_dispatch:
