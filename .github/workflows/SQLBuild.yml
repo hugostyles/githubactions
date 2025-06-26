@@ -81,10 +81,20 @@ jobs:
           $script = ".\Build Functions\Functions-DBAVerifyParameters.ps1" 
           $servernames = "${{ github.event.inputs.servernames }}"
           $authority = "${{ github.event.inputs.authority }}"
+          $SQLServerBuild = "${{ github.event.inputs.SQLServerBuild }}"
+          $environmentName = "${{ github.event.inputs.environmentName }}"
+          $environmentType = "${{ github.event.inputs.environmentType }}"
+          $environmentCategory = "${{ github.event.inputs.environmentCategory }}"
+          $EMISGroupDBAVersion = "${{ github.event.inputs.EMISGroupDBAVersion }}"
+          $EMISServiceManagerVersion = "${{ github.event.inputs.EMISServiceManagerVersion }}"
+          $reportingServer = "${{ github.event.inputs.reportingServer }}"
+          $sentryOneDB = "${{ github.event.inputs.sentryOneDB }}"
 
+
+          
           # Execute the script to validate the parameters
-          & $script -SQLServers $servernames -Authority $authority -ErrorAction Stop        
-        
+          & $script -SQLServers $servernames -Authority $authority -SQLServerBuild $SQLServerBuild -EnvironmentName $environmentName -EnvironmentType $environmentType -EnvironmentCategory $environmentCategory -EMISGroupDBAVersion $EMISGroupDBAVersion -EMISServiceManagerVersion $EMISServiceManagerVersion -ReportingServer $reportingServer -SentryOneDB $sentryOneDB -ErrorAction Stop
+
       - name: Get SQL Server names
         # This step retrieves the SQL Server names from the provided server names ready to upload as an artifact
         shell: powershell
