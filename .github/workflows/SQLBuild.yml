@@ -87,7 +87,7 @@ jobs:
             # Loop through each server name provided in the input
             Write-Host "Processing server: $server"
             try {
-            $instances = Get-DbaService -ComputerName $server -Type Engine -EnableException | Where-Object { $_.State -eq 'Running' }
+            $instances = Get-DbaService -ComputerName $server -Type Engine -EnableException | Where-Object { $_.State -eq 'Running' } |
             ForEach-Object { "$($_.ComputerName)\$($_.InstanceName)" }
             Write-Host "SQL Server instances found:"
             $instances
