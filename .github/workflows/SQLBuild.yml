@@ -3,17 +3,61 @@ name: Run SQL Build Automation
 on:
   workflow_dispatch:
     inputs:      
-      servernames:        
-        description: 'List of servers you require the run the build on (enter in Primary,Secondary,RS order) e.g., SERVER1,SERVER2'
+      Servernames:        
+        description: 'Server Names: List of servers you require to run the build on (enter in Primary,Secondary,RS order) e.g., SERVER1,SERVER2'
         required: true
         default: 'emeuw2hda-dbs01.shared-services.emis-web.com'
-      authority:        
-        description: 'England, Scotland, IoM, NI, Jersey, Wales etc'
+      IsAWS:        
+        description: 'Is AWS: Whether the build is being run in AWS, or on-prem.'
+        required: true
+        default: '1'   
+      SQLServerBuild:        
+        description: 'SQL Server Build: Microsoft SQL Server 2019 (RTM-CU32) (KB5054833) - 15.0.4430.1'
+        required: true
+        default: '15.0.4430'   
+      EnvironmentName:        
+        description: 'Environment Name: ENEUW2GP01DBS01 = 01, ENEUW2TRN901DB = 901, ENEUW2CM02DBS01 = 02'
+        required: true
+        default: '01'
+      EnvironmentType:        
+        description: 'Environment Type: Dev, Stg or Prd'
+        required: true
+        default: 'PRD'        
+      EnvironmentCategory:        
+        description: 'Environment Category: GPLive, CCMH, CS, UAT, TRN, Other'
+        required: true
+        default: 'GPLive'        
+      Authority:        
+        description: 'Authority: England, Scotland, IoM, NI, Jersey, Wales etc'
         required: true
         default: 'England'
+      Service:        
+        description: 'Service: Calls EMISGGroupDBA stored procedure [Service].[SetEMISWebOLTP]'
+        required: true
+        default: 'EMISWeb'
+      EMISGroupDBAVersion:        
+        description: 'EMISGroupDBA Version: The version of the EMISGroupDBA module to use for the build. This should be in the format vX.X.X(XXX) e.g., v2.3.0(421)'
+        required: true
+        default: 'v2.3.0(421)'  # in ADO this had extra quotes in the parameters?
+      EMISServiceManagerVersion:        
+        description: 'EMISServiceManager Version: The version of the EMISServiceManager module to use for the build. This should be in the format vX.X.X (XXX) e.g., v2.0.2 (126)'
+        required: true
+        default: 'v2.0.2 (126)'  # in ADO this had extra quotes in the parameters?
+      DeployEMISServiceManager:        
+        description: 'Deploy EMISServiceManager: Whether to deploy the EMISServiceManager module as part of the build.'
+        required: true
+        default: '1' 
+      ReportingServer:        
+        description: 'Reporting Server: Adds servernames to appropriate DBs on Eweblogs, em-lfewb01sis01.emishosting.com'
+        required: true
+        default: 'emeuw2hda-dbs01.shared-services.emis-web.com'
+      SentryOneDB:        
+        description: 'SentryOne Server: Add servers to SentryOne, EMEUW2SENDBS01.shared-services.emis-web.com'
+        required: true
+        default: 'emeuw2hda-dbs01.shared-services.emis-web.com'
+
 
 jobs:
-
 
   Prepare:
     runs-on: [self-hosted, windows]
@@ -112,7 +156,7 @@ jobs:
           path: instances.txt
 
 
-  Approval_Gate_1:
+  Build_Approval_Gate_1:
     runs-on: [self-hosted, windows]
     needs: Prepare
     environment:
@@ -123,7 +167,7 @@ jobs:
 
   Pre_Build:
     runs-on: [self-hosted, windows]
-    needs: Approval_Gate_1
+    needs: Build_Approval_Gate_1
     steps:
       - uses: actions/download-artifact@v4
         with:
