@@ -93,9 +93,9 @@ jobs:
 
           
           # Execute the script to validate the parameters
-          & $script -SQLServers $servernames -Authority $authority -SQLServerBuild $SQLServerBuild -EnvironmentName $environmentName -EnvironmentType $environmentType -EnvironmentCategory $environmentCategory -EMISGroupDBAVersion $EMISGroupDBAVersion -EMISServiceManagerVersion $EMISServiceManagerVersion -ReportingServer $reportingServer -SentryOneDB $sentryOneDB -ErrorAction Stop
+          & $script -Servernames $servernames -Authority $authority -SQLServerBuild $SQLServerBuild -EnvironmentName $environmentName -EnvironmentType $environmentType -EnvironmentCategory $environmentCategory -EMISGroupDBAVersion $EMISGroupDBAVersion -EMISServiceManagerVersion $EMISServiceManagerVersion -ReportingServer $reportingServer -SentryOneDB $sentryOneDB -ErrorAction Stop
 
-      - name: Get SQL Server names
+      - name: Get SQL Server names from parameter
         # This step retrieves the SQL Server names from the provided server names ready to upload as an artifact
         shell: powershell
         run: |
@@ -126,7 +126,7 @@ jobs:
           name: servernames
           path: servernames.txt
 
-      - name: Get SQL Instance names
+      - name: Get SQL Instance names from servername parameter
         # Get SQL Server instances from the provided server names
         # This step uses the dbatools module to retrieve SQL Server instances ready to upload as an artifact
         shell: powershell
